@@ -29,3 +29,10 @@ module.exports = {
   DB_URI,
   BCRYPT_WORK_FACTOR,
 };
+
+// admin
+// INSERT INTO users (username, password, first_name, last_name, email, is_admin) VALUES ('admin', '$2b$12$N3gCT/MGetmAgLEQKgmLueWeo16D/3Z24yIRdmTYQvHuqyD4ZXhMC', 'admin', 'user', 'test@email.com', true);
+// token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImlhdCI6MTU5Nzg2NDU0OX0.3K7KXWIMWM_bmQlJ_k_nfOoTFSCkqm6J3OEJ5maETsY"
+
+// QUESTIONS
+// 1. what does expect.assertions(1) do?

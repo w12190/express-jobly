@@ -1,3 +1,7 @@
+"use strict";
+
+const { BadRequestError } = require("../expressError");
+
 /** Generates SQL WHERE clause for a parameterized UPDATE query.
  * Accepts POJO of key:value pairs, returns POJO with SQL WHERE clause string and array of associated values.
  * Input: sqlForPartialUpdate({
@@ -10,7 +14,8 @@
  *           values: ["Applepie", "100", "Apple post-layoffs"]
  *         }
  */
-function sqlForPartialUpdate(dataToUpdate) {
+function sqlForPartialUpdate(dataToUpdate = {}) {
+  if (Object.getPrototypeOf(dataToUpdate) !== Object.prototype || Object.keys(dataToUpdate).length === 0) throw new BadRequestError("No data to update.");
   // Maps POJO keys to parameterized WHERE clause string
   const cols = Object.keys(dataToUpdate).map(
       (col, idx) => `${col}=$${idx + 1}`);
@@ -22,3 +27,5 @@ function sqlForPartialUpdate(dataToUpdate) {
     values: Object.values(dataToUpdate),
   };
 }
+
+module.exports = sqlForPartialUpdate;
