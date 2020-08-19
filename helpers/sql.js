@@ -28,4 +28,4 @@ function sqlForPartialUpdate(dataToUpdate = {}) {
   };
 }
 
-module.exports = sqlForPartialUpdate;
+module.exports = {sqlForPartialUpdate};

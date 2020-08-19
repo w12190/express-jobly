@@ -20,6 +20,17 @@ class Company {
     return companiesRes.rows;
   }
 
+  /** Find all companies that match given name, minEmployees, and/or maxEmployees
+   * 
+   *  Data should be { name, minEmployees, maxEmployees } but none are required. 
+   *  In order to get to this function there must be at least 1 search field.
+   * 
+   *  Returns [{ handle, name }, ...] (empty list if none found)
+   */
+  static async filterAll(filterBy) {
+
+  }
+
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, num_employees, description, logo_url }

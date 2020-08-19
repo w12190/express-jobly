@@ -26,6 +26,63 @@ describe("findAll", function () {
   });
 });
 
+// (handle, name, num_employees, description, logo_url)
+// ('c1', 'C1', 1, 'Desc1', 'http://c1.img'),
+// ('c2', 'C2', 2, 'Desc2', 'http://c2.img'),
+// ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
+
+
+describe("filterAll", function () {
+  test("filter by name", async function () {
+    const companies = await Company.filterAll({"name": "2"});
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2"
+      }
+    ]);
+  });
+
+  test("filter by minEmployees", async function () {
+    const companies = await Company.filterAll({"minEmployees": "2"});
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        num_employees: 2
+      },
+      {
+        handle: "c3",
+        num_employees: 3
+      }
+    ]);
+  });
+
+  test("filter by maxEmployees", async function () {
+    const companies = await Company.filterAll({"maxEmployees": "2"});
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        num_employees: 1
+      },
+      {
+        handle: "c2",
+        num_employees: 2
+      }
+    ]);
+  });
+
+  test("filter by name, minEmployees, maxEmployees", async function () {
+    const companies = await Company.filterAll({"name": "2", "minEmployees": "1", "maxEmployees": "2"});
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        num_employees: 2
+      }
+    ]);
+  });
+})
+
 
 describe("get", function () {
   test("succeeds", async function () {
