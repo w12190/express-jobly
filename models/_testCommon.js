@@ -30,6 +30,16 @@ async function commonBeforeAll() {
     VALUES ('test', $1, 'Test', 'Tester', 'test@test.com'),
            ('test2', $2, 'Test2', 'Tester2', 'test2@test.com')
   `, [...testPasswords]);
+
+  await db.query(`
+  INSERT INTO jobs(title,
+                    salary,
+                    equity,
+                    company_handle)
+  VALUES ('j1', 1, 1, 'c1'),
+         ('j2', 2, 2, 'c2')
+         ('j3', 3, 0, 'c3')
+`);
 }
 
 async function commonBeforeEach() {

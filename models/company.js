@@ -14,39 +14,29 @@ class Company {
   */
  // it should be stable w/ what it returns, don't change select
   static async findAllWithFilter(searchCriteria = {}) {
-    console.log('findAllWithFilter()')//DEBUG
     const whereClause = []
     const queryValues = []
 
-    let selectClause = ''
-    let showNumEmployees = false
     let counter = 1
 
     // If minEmployees > maxEmployees, throw error
     if (searchCriteria.minEmployees > searchCriteria.maxEmployees) throw new BadRequestError();
 
-    //If no search, display name column
-    if (Object.keys(searchCriteria).length === 0) selectClause += ', name'
-
-    // Construct whereClause, populate queryValues, construct selectClause
+    // Construct whereClause, populate queryValues
     for (let criterion in searchCriteria) {
       if (criterion === 'name') {
-        // use ILIKE
-        whereClause.push(`upper(name) LIKE '%' || $${counter++} || '%'`)
-        queryValues.push(searchCriteria[criterion].toUpperCase())
-        selectClause += ', name'
+        whereClause.push(`name ILIKE '%' || $${counter++} || '%'`)
+        queryValues.push(searchCriteria[criterion])
       }
       else if (criterion.includes('Employees')) {
         const inequalitySign = (criterion === 'maxEmployees') ? '<=' : '>='
         whereClause.push(`num_employees ${inequalitySign} $${counter++}`)
         queryValues.push(searchCriteria[criterion])
-        selectClause += showNumEmployees ? '' : ', num_employees'
-        showNumEmployees = true
       }
     }   
 
     const results = await db.query(
-        `SELECT handle ${selectClause} FROM companies`                                   // SELECT clause 
+        `SELECT handle, name FROM companies`                                   
         + ` ${whereClause.length === 0 ? '' : (`WHERE ${whereClause.join(' AND ')}`)}`   // WHERE clause
         + ` ORDER BY handle`,                                                            // ORDER BY clause
          queryValues);

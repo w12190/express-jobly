@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 const request = require("supertest");
 
@@ -20,63 +20,60 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
 
-describe("POST /companies", function () {
+describe("POST /jobs", function () {
   test("ok for admins", async function () {
     const resp = await request(app)
-        .post("/companies")
+        .post("/jobs")
         .send({
-          handle: "cnew",
-          name: "CNew",
-          logo_url: "http://cnew.img",
-          description: "DescNew",
-          num_employees: 10,
+          title: "j4",
+          salary: 4,
+          equity: 4,
+          company_handle: "c3",
           _token: adminToken,
         });
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
-      company: {
-        handle: "cnew",
-        name: "CNew",
-        logo_url: "http://cnew.img",
-        description: "DescNew",
-        num_employees: 10,
+      job: {
+        id: 4,
+        title: "j4",
+        salary: 4,
+        equity: 4,
+        company_handle: "c3"
       },
     });
   });
 
   test("unauth for anon", async function () {
     const resp = await request(app)
-        .post("/companies")
+        .post("/jobs")
         .send({
-          handle: "cnew",
-          name: "CNew",
-          logo_url: "http://cnew.img",
-          description: "DescNew",
-          num_employees: 10,
+          title: "j4",
+          salary: 4,
+          equity: 4,
+          company_handle: "c3",
         });
     expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for users", async function () {
     const resp = await request(app)
-        .post("/companies")
+        .post("/jobs")
         .send({
-          handle: "cnew",
-          name: "CNew",
-          logo_url: "http://cnew.img",
-          description: "DescNew",
-          num_employees: 10,
-          _token: u1Token,
+          title: "j4",
+          salary: 4,
+          equity: 4,
+          company_handle: "c3",
+          _token: u1Token
         });
     expect(resp.statusCode).toEqual(401);
   });
 
   test("fails with missing data", async function () {
     const resp = await request(app)
-        .post("/companies")
+        .post("/jobs")
         .send({
-          handle: "cnew",
-          num_employees: 10,
+          equity: 4,
+          company_handle: "c3",
           _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
@@ -84,45 +81,42 @@ describe("POST /companies", function () {
 
   test("fails with invalid data", async function () {
     const resp = await request(app)
-        .post("/companies")
+        .post("/jobs")
         .send({
-          handle: "cnew",
-          name: "CNew",
-          logo_url: "not-a-url",
-          description: "DescNew",
-          num_employees: 10,
-          _token: adminToken,
+          title: "j4",
+          salary: "not_an_integer",
+          equity: "not_an_integer",
+          company_handle: "c3",
+          _token: adminToken
         });
     expect(resp.statusCode).toEqual(400);
   });
 });
 
-// TODO: 1 test for filtering
-//TODO: to .send minimum employees too (just switch the tests)
-describe("GET /companies", function () {
-  test("ok for anon", async function () {
+describe("GET /jobs", function () {
+  test("works with filtering", async function () {
     const resp = await request(app)
-      .get("/companies")
+      .get("/jobs")
       .send({
-        minEmployees: 2
+        minSalary: 2
       })
     expect(resp.body).toEqual({
-      companies:
+      jobs:
           [
-            { handle: "c2", name: "C2" },
-            { handle: "c3", name: "C3" },
+            { id: 2, title: 'j2' },
+            { id: 3, title: 'j3' }
           ],
     });
   });
 
-  test("works with filtering", async function () {
-    const resp = await request(app).get("/companies");
+  test("works with no filtering", async function () {
+    const resp = await request(app).get("/jobs");
     expect(resp.body).toEqual({
-      companies:
+      jobs:
           [
-            { handle: "c1", name: "C1" },
-            { handle: "c2", name: "C2" },
-            { handle: "c3", name: "C3" },
+            { id: 1, title: 'j1' },
+            { id: 2, title: 'j2' },
+            { id: 3, title: 'j3' }
           ],
     });
   });
@@ -131,69 +125,68 @@ describe("GET /companies", function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This
     // should cause an error, all right :)
-    await db.query("DROP TABLE companies CASCADE");
+    await db.query("DROP TABLE jobs CASCADE");
     const resp = await request(app)
-        .get("/companies")
+        .get("/jobs")
         .send({ _token: u1Token });
     expect(resp.statusCode).toEqual(500);
   });
 });
 
 
-describe("GET /companies/:handle", function () {
+describe("GET /jobs/:id", function () {
   test("ok for anon", async function () {
-    const resp = await request(app).get(`/companies/c1`);
+    const resp = await request(app).get(`/jobs/1`);
     expect(resp.body).toEqual({
-      company: {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        num_employees: 1,
-        logo_url: null,
+      job: {
+        id: 1,
+        title: "j1",
+        salary: 1,
+        equity: 1,
+        company_handle: "c1"
       },
     });
   });
 
-  test("fails for company missing", async function () {
-    const resp = await request(app).get(`/companies/nope`);
+  test("fails for job missing", async function () {
+    const resp = await request(app).get(`/jobs/nope`);
     expect(resp.statusCode).toEqual(404);
   });
 });
 
 
-describe("PATCH /companies/:handle", function () {
+describe("PATCH /jobs/:id", function () {
   test("ok for admin", async function () {
     const resp = await request(app)
-        .patch(`/companies/c1`)
+        .patch(`/jobs/j1`)
         .send({
-          name: "C1-new",
+          title: "j1-new",
           _token: adminToken,
         });
     expect(resp.body).toEqual({
-      company: {
-        handle: "c1",
-        name: "C1-new",
-        description: "Desc1",
-        num_employees: 1,
-        logo_url: null,
+      job: {
+        title: "j1-new",
+        salary: 1,
+        equity: 1,
+        company_handle: "c1"
       },
     });
   });
 
   test("fails for anon", async function () {
     const resp = await request(app)
-        .patch(`/companies/c1`)
+        .patch(`/jobs/1`)
         .send({
-          name: "C1-new",
+          title: "j1-new",
         });
     expect(resp.statusCode).toEqual(401);
   });
 
   test("fails on handle change attempt", async function () {
     const resp = await request(app)
-        .patch(`/companies/c1`)
+        .patch(`/jobs/1`)
         .send({
-          handle: "c1-new",
+          title: "j1-new",
           _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
@@ -201,9 +194,9 @@ describe("PATCH /companies/:handle", function () {
 
   test("fails on invalid data", async function () {
     const resp = await request(app)
-        .patch(`/companies/c1`)
+        .patch(`/jobs/1`)
         .send({
-          logo_url: "not-a-url",
+          salary: "not-an-integer",
           _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
@@ -211,25 +204,25 @@ describe("PATCH /companies/:handle", function () {
 });
 
 
-describe("DELETE /companies/:handle", function () {
+describe("DELETE /jobs/:id", function () {
   test("ok for admin", async function () {
     const resp = await request(app)
-        .delete(`/companies/c1`)
+        .delete(`/jobs/1`)
         .send({
           _token: adminToken,
         });
-    expect(resp.body).toEqual({ deleted: "c1" });
+    expect(resp.body).toEqual({ deleted: "j1" });
   });
 
   test("fails for anon", async function () {
     const resp = await request(app)
-        .delete(`/companies/c1`);
+        .delete(`/jobs/1`);
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("fails for missing company", async function () {
+  test("fails for missing job", async function () {
     const resp = await request(app)
-        .delete(`/companies/nope`)
+        .delete(`/jobs/nope`)
         .send({
           _token: adminToken,
         });
