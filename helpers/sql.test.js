@@ -4,22 +4,19 @@ const request = require("supertest");
 const {sqlForPartialUpdate} = require("./sql");
 const app = require("../app");
 
-// const {
-//   commonBeforeAll,
-//   commonBeforeEach,
-//   commonAfterEach,
-//   commonAfterAll,
-// } = require("../routes/_testCommon");
-
-// beforeAll(commonBeforeAll);
-// beforeEach(commonBeforeEach);
-// afterEach(commonAfterEach);
-// afterAll(commonAfterAll);
-
-// describe("")
+// test one
+test("works as expected with one key", function() {
+  const testData = {
+                  name: "Applepie"
+                };
+  expect(sqlForPartialUpdate(testData)).toEqual({
+               setCols: `name=$1`,
+               values: ["Applepie"]
+              });
+});
 
 // expected output
-test("works as expected", function() {
+test("works as expected with 3 keys", function() {
   const testData = {
                   name: "Applepie",
                   num_employees: "100",
@@ -49,15 +46,4 @@ test("Throws BadRequestError if given something other than a POJO", function() {
   } catch (err) {
     expect(err).toBeTruthy();
   }
-});
-
-// test one - TODO: fix this
-test("works as expected", function() {
-  const testData = {
-                  name: "Applepie"
-                };
-  expect(sqlForPartialUpdate(testData)).toEqual({
-               setCols: `name=$1, num_employees=$2, description=$3`,
-               values: ["Applepie", "100", "Apple post-layoffs"]
-              });
 });

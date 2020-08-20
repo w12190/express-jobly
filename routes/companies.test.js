@@ -100,6 +100,21 @@ describe("POST /companies", function () {
 // TODO: 1 test for filtering
 describe("GET /companies", function () {
   test("ok for anon", async function () {
+    const resp = await request(app)
+      .get("/companies")
+      .send({
+        minEmployees: 2
+      })
+    expect(resp.body).toEqual({
+      companies:
+          [
+            { handle: "c2", name: "C2" },
+            { handle: "c3", name: "C3" },
+          ],
+    });
+  });
+
+  test("works with filtering", async function () {
     const resp = await request(app).get("/companies");
     expect(resp.body).toEqual({
       companies:

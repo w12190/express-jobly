@@ -40,11 +40,11 @@ describe("findAllWithFilter", function () {
     expect(companies).toEqual([
       {
         handle: "c2",
-        num_employees: 2
+        name: "C2"
       },
       {
         handle: "c3",
-        num_employees: 3
+        name: "C3"
       }
     ]);
   });
@@ -54,11 +54,11 @@ describe("findAllWithFilter", function () {
     expect(companies).toEqual([
       {
         handle: "c1",
-        num_employees: 1
+        name: "C1"
       },
       {
         handle: "c2",
-        num_employees: 2
+        name: "C2"
       }
     ]);
   });
@@ -69,7 +69,6 @@ describe("findAllWithFilter", function () {
       {
         handle: "c2",
         name: "C2",
-        num_employees: 2
       }
     ]);
   });
