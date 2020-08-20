@@ -12,11 +12,8 @@ class Company {
   *  Data should be { name, minEmployees, maxEmployees } but none are required. 
   *  Returns [{ handle, name }, ...] (empty list if none found)
   */
-  static async findAllWithFilter(searchCriteria) {
+  static async findAllWithFilter(searchCriteria = {}) {
     console.log('findAllWithFilter()')//DEBUG
-    // const searchCriteria = searchRequest
-
-    // const orderByClause = 'ORDER BY name'
     const whereClause = []
     const queryValues = []
 
