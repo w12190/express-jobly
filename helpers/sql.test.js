@@ -1,7 +1,7 @@
 "use strict";
 
 const request = require("supertest");
-const sqlForPartialUpdate = require("./sql");
+const {sqlForPartialUpdate} = require("./sql");
 const app = require("../app");
 
 // const {

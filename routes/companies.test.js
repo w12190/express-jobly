@@ -11,6 +11,7 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  adminToken,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -29,7 +30,7 @@ describe("POST /companies", function () {
           logo_url: "http://cnew.img",
           description: "DescNew",
           num_employees: 10,
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
@@ -62,7 +63,7 @@ describe("POST /companies", function () {
         .send({
           handle: "cnew",
           num_employees: 10,
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
   });
@@ -76,7 +77,7 @@ describe("POST /companies", function () {
           logo_url: "not-a-url",
           description: "DescNew",
           num_employees: 10,
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
   });
@@ -136,7 +137,7 @@ describe("PATCH /companies/:handle", function () {
         .patch(`/companies/c1`)
         .send({
           name: "C1-new",
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.body).toEqual({
       company: {
@@ -163,7 +164,7 @@ describe("PATCH /companies/:handle", function () {
         .patch(`/companies/c1`)
         .send({
           handle: "c1-new",
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
   });
@@ -173,7 +174,7 @@ describe("PATCH /companies/:handle", function () {
         .patch(`/companies/c1`)
         .send({
           logo_url: "not-a-url",
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.statusCode).toEqual(400);
   });
@@ -185,7 +186,7 @@ describe("DELETE /companies/:handle", function () {
     const resp = await request(app)
         .delete(`/companies/c1`)
         .send({
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.body).toEqual({ deleted: "c1" });
   });
@@ -200,7 +201,7 @@ describe("DELETE /companies/:handle", function () {
     const resp = await request(app)
         .delete(`/companies/nope`)
         .send({
-          _token: u1Token,
+          _token: adminToken,
         });
     expect(resp.statusCode).toEqual(404);
   });

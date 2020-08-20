@@ -21,6 +21,9 @@ class Company {
     let showNumEmployees = false
     let counter = 1
 
+    // If minEmployees > maxEmployees, throw error
+    if (searchCriteria.minEmployees > searchCriteria.maxEmployees) throw new BadRequestError();
+
     //If no search, display name column
     if (Object.keys(searchCriteria).length === 0) selectClause += ', name'
 
