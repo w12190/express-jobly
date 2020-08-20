@@ -1,5 +1,4 @@
 "use strict";
-
 const { BadRequestError } = require("../expressError");
 
 /** Generates SQL WHERE clause for a parameterized UPDATE query.

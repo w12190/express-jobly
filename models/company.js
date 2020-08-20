@@ -3,32 +3,53 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
+const sql = require("../helpers/sql");
 
 /** Related functions for companies. */
 
 class Company {
-  /** Find all companies.
-   *
-   * Returns [{ handle, name }, ...] (empty list if none found)
-   * */
+  /** Return all companies that optionally match given name, minEmployees, and/or maxEmployees.
+  *  Data should be { name, minEmployees, maxEmployees } but none are required. 
+  *  Returns [{ handle, name }, ...] (empty list if none found)
+  */
+  static async findAllWithFilter(searchCriteria) {
+    console.log('findAllWithFilter()')//DEBUG
+    // const searchCriteria = searchRequest
 
-  static async findAll() {
-    const companiesRes = await db.query(
-        `SELECT handle, name
-           FROM companies
-           ORDER BY name`);
-    return companiesRes.rows;
-  }
+    // const orderByClause = 'ORDER BY name'
+    const whereClause = []
+    const queryValues = []
 
-  /** Find all companies that match given name, minEmployees, and/or maxEmployees
-   * 
-   *  Data should be { name, minEmployees, maxEmployees } but none are required. 
-   *  In order to get to this function there must be at least 1 search field.
-   * 
-   *  Returns [{ handle, name }, ...] (empty list if none found)
-   */
-  static async filterAll(filterBy) {
+    let selectClause = ''
+    let showNumEmployees = false
+    let counter = 1
 
+    //If no search, display name column
+    if (Object.keys(searchCriteria).length === 0) selectClause += ', name'
+
+    // Construct whereClause, populate queryValues, construct selectClause
+    for (let criterion in searchCriteria) {
+      if (criterion === 'name') {
+        whereClause.push(`upper(name) LIKE '%' || $${counter++} || '%'`)
+        queryValues.push(searchCriteria[criterion].toUpperCase())
+        selectClause += ', name'
+      }
+      else if (criterion.includes('Employees')) {
+        const inequalitySign = (criterion === 'maxEmployees') ? '<=' : '>='
+        whereClause.push(`num_employees ${inequalitySign} $${counter++}`)
+        queryValues.push(searchCriteria[criterion])
+        selectClause += showNumEmployees ? '' : ', num_employees'
+        showNumEmployees = true
+      }
+    }   
+
+    const results = await db.query(
+        `SELECT handle ${selectClause} FROM companies`                                   // SELECT clause 
+        + ` ${whereClause.length === 0 ? '' : (`WHERE ${whereClause.join(' AND ')}`)}`   // WHERE clause
+        + ` ORDER BY handle`,                                                            // ORDER BY clause
+         queryValues);
+
+    return results.rows;
   }
 
   /** Given a company handle, return data about company.
@@ -40,10 +61,10 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(
-        `SELECT handle, name, num_employees, description, logo_url
+      `SELECT handle, name, num_employees, description, logo_url
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]);
 
     const company = companyRes.rows[0];
 
@@ -63,26 +84,26 @@ class Company {
 
   static async create({ handle, name, num_employees, description, logo_url }) {
     const duplicateCheck = await db.query(
-        `SELECT handle
+      `SELECT handle
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]);
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${handle}`);
 
     const result = await db.query(
-        `INSERT INTO companies
+      `INSERT INTO companies
            (handle, name, num_employees, description, logo_url)
            VALUES ($1, $2, $3, $4, $5)
            RETURNING handle, name, num_employees, description, logo_url`,
-        [
-          handle,
-          name,
-          num_employees,
-          description,
-          logo_url,
-        ],
+      [
+        handle,
+        name,
+        num_employees,
+        description,
+        logo_url,
+      ],
     );
     const company = result.rows[0];
 
@@ -130,11 +151,11 @@ class Company {
 
   static async remove(handle) {
     const result = await db.query(
-        `DELETE
+      `DELETE
            FROM companies
            WHERE handle = $1
            RETURNING handle`,
-        [handle]);
+      [handle]);
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);

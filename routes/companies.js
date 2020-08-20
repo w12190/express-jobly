@@ -11,6 +11,7 @@ const Company = require("../models/Company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companyFilterSchema = require("../schemas/companyFilter.json")
 
 const router = new express.Router();
 
@@ -26,7 +27,17 @@ const router = new express.Router();
 
 router.get("/", async function (req, res, next) {
   try {
-    const companies = await Company.findAll();
+    console.log('GET /companies (with optional filter)')
+    // Validate input JSON
+    const validator = jsonschema.validate(req.body, companyFilterSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    // Do the search
+    const companies = await Company.findAllWithFilter(req.body)
+
     return res.json({ companies });
   } catch (err) {
     return next(err);
@@ -42,6 +53,8 @@ router.get("/", async function (req, res, next) {
  **/
 
 router.get("/:handle", async function (req, res, next) {
+  console.log('GET /companies/:handle')
+
   try {
     const company = await Company.get(req.params.handle);
     return res.json({ company });
@@ -60,6 +73,8 @@ router.get("/:handle", async function (req, res, next) {
  **/
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
+  console.log('POST /companies/')
+
   try {
     const validator = jsonschema.validate(req.body, companyNewSchema);
     if (!validator.valid) {
@@ -86,6 +101,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  **/
 
 router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
+  console.log('PATCH /companies/:handle')
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
@@ -106,6 +122,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
  **/
 
 router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
+  console.log('DELETE /companies/:handle')
   try {
     await Company.remove(req.params.handle);
     return res.json({ deleted: req.params.handle });

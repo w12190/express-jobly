@@ -15,26 +15,18 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
 
-describe("findAll", function () {
-  test("all", async function () {
-    let companies = await Company.findAll();
+describe("findAllWithFilter", function () {
+  test("no filter, return all", async function () {
+    let companies = await Company.findAllWithFilter();
     expect(companies).toEqual([
       { handle: "c1", name: "C1" },
       { handle: "c2", name: "C2" },
       { handle: "c3", name: "C3" },
     ]);
   });
-});
 
-// (handle, name, num_employees, description, logo_url)
-// ('c1', 'C1', 1, 'Desc1', 'http://c1.img'),
-// ('c2', 'C2', 2, 'Desc2', 'http://c2.img'),
-// ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
-
-
-describe("filterAll", function () {
   test("filter by name", async function () {
-    const companies = await Company.filterAll({"name": "2"});
+    const companies = await Company.findAllWithFilter({ "name": "2" });
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -44,7 +36,7 @@ describe("filterAll", function () {
   });
 
   test("filter by minEmployees", async function () {
-    const companies = await Company.filterAll({"minEmployees": "2"});
+    const companies = await Company.findAllWithFilter({ "minEmployees": "2" });
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -58,7 +50,7 @@ describe("filterAll", function () {
   });
 
   test("filter by maxEmployees", async function () {
-    const companies = await Company.filterAll({"maxEmployees": "2"});
+    const companies = await Company.findAllWithFilter({ "maxEmployees": "2" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -72,7 +64,7 @@ describe("filterAll", function () {
   });
 
   test("filter by name, minEmployees, maxEmployees", async function () {
-    const companies = await Company.filterAll({"name": "2", "minEmployees": "1", "maxEmployees": "2"});
+    const companies = await Company.findAllWithFilter({ "name": "2", "minEmployees": "1", "maxEmployees": "2" });
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -81,7 +73,7 @@ describe("filterAll", function () {
       }
     ]);
   });
-})
+});
 
 
 describe("get", function () {
@@ -205,7 +197,7 @@ describe("remove", function () {
   test("succeeds", async function () {
     await Company.remove("c1");
     const res = await db.query(
-        "SELECT * FROM companies WHERE handle=$1", ["c1"]);
+      "SELECT * FROM companies WHERE handle=$1", ["c1"]);
     expect(res.rows.length).toEqual(0);
   });
 
