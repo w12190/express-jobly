@@ -21,7 +21,7 @@ afterAll(commonAfterAll);
 
 
 describe("POST /companies", function () {
-  test("ok for users", async function () {
+  test("ok for admins", async function () {
     const resp = await request(app)
         .post("/companies")
         .send({
@@ -57,6 +57,20 @@ describe("POST /companies", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+  test("unauth for users", async function () {
+    const resp = await request(app)
+        .post("/companies")
+        .send({
+          handle: "cnew",
+          name: "CNew",
+          logo_url: "http://cnew.img",
+          description: "DescNew",
+          num_employees: 10,
+          _token: u1Token,
+        });
+    expect(resp.statusCode).toEqual(401);
+  });
+
   test("fails with missing data", async function () {
     const resp = await request(app)
         .post("/companies")
@@ -83,7 +97,7 @@ describe("POST /companies", function () {
   });
 });
 
-
+// TODO: 1 test for filtering
 describe("GET /companies", function () {
   test("ok for anon", async function () {
     const resp = await request(app).get("/companies");

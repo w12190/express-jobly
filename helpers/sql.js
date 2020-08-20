@@ -14,7 +14,8 @@ const { BadRequestError } = require("../expressError");
  *         }
  */
 function sqlForPartialUpdate(dataToUpdate = {}) {
-  if (Object.getPrototypeOf(dataToUpdate) !== Object.prototype || Object.keys(dataToUpdate).length === 0) throw new BadRequestError("No data to update.");
+  if (Object.getPrototypeOf(dataToUpdate) !== Object.prototype
+    || Object.keys(dataToUpdate).length === 0) throw new BadRequestError("No data to update.");
   // Maps POJO keys to parameterized WHERE clause string
   const cols = Object.keys(dataToUpdate).map(
       (col, idx) => `${col}=$${idx + 1}`);

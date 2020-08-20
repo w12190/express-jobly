@@ -56,9 +56,9 @@ describe("_ensureLoggedIn", function () {
   });
 
   test("failure", function () {
-    expect.assertions = 1;
+    expect.assertions(1);;
     const req = {};
-    const res = { locals: {} };
+    const res = { locals: { user: { username: "test", is_admin: false } } };
     try {
       _ensureLoggedIn(req, res);
     } catch (err) {
@@ -68,19 +68,23 @@ describe("_ensureLoggedIn", function () {
 });
 
 describe("_ensureAdmin", function () {
-  // test("success", function () {
-  //   const req = {};
-  //   const res = { locals: { user: { username: "test", is_admin: true } } };
-  //   _ensureAdmin(req, res);
-  // });
-
-  test("failure", function () {
-    expect.assertions = 1;
+  test("success", function () {
     const req = {};
-    const res = { locals: {} };
+    const res = { locals: { user: { username: "test", is_admin: true } } };
+    _ensureAdmin(req, res);
+  });
+
+  test("fails if not admin", function () {
+    expect.assertions(1);
+    const req = {};
+    const res = { locals: { user: { username: "test", is_admin: false } } };
+    // console.log("test is running")
     try {
+      // console.log("trying _ensureAdmin")
       _ensureAdmin(req, res);
+      // console.log("tried _ensureAdmin")
     } catch (err) {
+      // console.log("Throwing error", err)
       expect(err).toBeTruthy();
     }
   });

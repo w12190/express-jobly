@@ -63,7 +63,6 @@ function ensureLoggedIn(req, res, next) {
 // an error: this makes this easily unit-tested.
 
 function _ensureAdmin(req, res) {
-  console.log("this is is_admin:", res.locals.user.is_admin, !res.locals.user.is_admin)
   if (!res.locals.user.is_admin) throw new UnauthorizedError();
 }
 

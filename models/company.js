@@ -12,6 +12,7 @@ class Company {
   *  Data should be { name, minEmployees, maxEmployees } but none are required. 
   *  Returns [{ handle, name }, ...] (empty list if none found)
   */
+ // it should be stable w/ what it returns, don't change select
   static async findAllWithFilter(searchCriteria = {}) {
     console.log('findAllWithFilter()')//DEBUG
     const whereClause = []
@@ -30,6 +31,7 @@ class Company {
     // Construct whereClause, populate queryValues, construct selectClause
     for (let criterion in searchCriteria) {
       if (criterion === 'name') {
+        // use ILIKE
         whereClause.push(`upper(name) LIKE '%' || $${counter++} || '%'`)
         queryValues.push(searchCriteria[criterion].toUpperCase())
         selectClause += ', name'

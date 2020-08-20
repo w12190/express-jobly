@@ -50,3 +50,14 @@ test("Throws BadRequestError if given something other than a POJO", function() {
     expect(err).toBeTruthy();
   }
 });
+
+// test one - TODO: fix this
+test("works as expected", function() {
+  const testData = {
+                  name: "Applepie"
+                };
+  expect(sqlForPartialUpdate(testData)).toEqual({
+               setCols: `name=$1, num_employees=$2, description=$3`,
+               values: ["Applepie", "100", "Apple post-layoffs"]
+              });
+});
