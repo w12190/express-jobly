@@ -35,14 +35,13 @@ class Job {
     // console.log("this is queryValues", queryValues)
     console.log(`SELECT id, title FROM jobs`                                   
     + ` ${whereClause.length === 0 ? '' : (`WHERE ${whereClause.join(' AND ')}`)}`    // WHERE clause
-    + ` ORDER BY id`)
+    + ` ORDER BY id`, queryValues)
 
     const results = await db.query(
         `SELECT id, title FROM jobs`                                   
         + ` ${whereClause.length === 0 ? '' : (`WHERE ${whereClause.join(' AND ')}`)}`    // WHERE clause
         + ` ORDER BY id`,                                                                 // ORDER BY clause
          queryValues);
-
     return results.rows;
   }
 
@@ -78,21 +77,19 @@ class Job {
 
   static async create({ title, salary, equity, company_handle }) {
     const duplicateCheck = await db.query(
-      `SELECT id
+      `SELECT title
            FROM jobs
-           WHERE id = $1`,
-      [id]);
+           WHERE title = $1`, [title]);
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate job: ${id}`);
 
     const result = await db.query(
       `INSERT INTO jobs
-           (id, title, salary, equity, company_handle)
-           VALUES ($1, $2, $3, $4, $5)
+           (title, salary, equity, company_handle)
+           VALUES ($1, $2, $3, $4)
            RETURNING id, title, salary, equity, company_handle`,
       [
-        id,
         title,
         salary,
         equity,
