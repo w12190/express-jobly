@@ -78,13 +78,9 @@ describe("_ensureAdmin", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: { user: { username: "test", is_admin: false } } };
-    // console.log("test is running")
     try {
-      // console.log("trying _ensureAdmin")
       _ensureAdmin(req, res);
-      // console.log("tried _ensureAdmin")
     } catch (err) {
-      // console.log("Throwing error", err)
       expect(err).toBeTruthy();
     }
   });
