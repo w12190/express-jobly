@@ -42,7 +42,7 @@ describe("Job.findAllWithFilter() tests", function () {
         company_handle: "c3"
       }
     ]
-
+    console.log("#@@#@#@#@#@# this is res.rows", res.rows)
     expect(res.rows).toEqual(allDbJobs)
   })
 
@@ -118,117 +118,117 @@ describe("Job.findAllWithFilter() tests", function () {
 
 })
 
-describe("Job.get() tests", function (){
-  test("gets a specific job by id correctly", async function (){
-    let job = await Job.get('1')
-    expect(job).toEqual({
-      id: 1,
-      title: "j1",
-      salary: 1,
-      equity: 1,
-      company_handle: "c1"
-    })
-  })
+// describe("Job.get() tests", function (){
+//   test("gets a specific job by id correctly", async function (){
+//     let job = await Job.get('1')
+//     expect(job).toEqual({
+//       id: 1,
+//       title: "j1",
+//       salary: 1,
+//       equity: 1,
+//       company_handle: "c1"
+//     })
+//   })
 
-  test("fails when we try to get a nonexistent job", async function (){
-    try{
-      const fakeJob = await Job.get('0')
-      fail('No error was thrown, test failed.')
-    }
-    catch(err){
-      expect(error).toBeTruthy()
-    }
-  })
-})
+//   test("fails when we try to get a nonexistent job", async function (){
+//     try{
+//       const fakeJob = await Job.get('0')
+//       fail('No error was thrown, test failed.')
+//     }
+//     catch(err){
+//       expect(error).toBeTruthy()
+//     }
+//   })
+// })
 
-describe("Job.create() tests", function () {
-  test("creates a job correctly", async function () {
-    const correctJobData = { id: 4, title: 'j4', salary: 4, equity: 4, company_handle: 'c3' }
-    const newJob = await Job.create({ title: 'j4', salary: 4, equity: 4, company_handle: 'c3' })
+// describe("Job.create() tests", function () {
+//   test("creates a job correctly", async function () {
+//     const correctJobData = { id: 4, title: 'j4', salary: 4, equity: 4, company_handle: 'c3' }
+//     const newJob = await Job.create({ title: 'j4', salary: 4, equity: 4, company_handle: 'c3' })
 
-    //Check the returned job is correct
-    expect(newJob).toEqual(correctJobData)
+//     //Check the returned job is correct
+//     expect(newJob).toEqual(correctJobData)
 
-    // Check the created job is correct in database
-    const res = db.query('SELECT * FROM jobs WHERE title = $1', ['j4'])
-    expect(res.rows[0]).toEqual(correctJobData)
-  })
+//     // Check the created job is correct in database
+//     const res = db.query('SELECT * FROM jobs WHERE title = $1', ['j4'])
+//     expect(res.rows[0]).toEqual(correctJobData)
+//   })
 
-  test("fails when try to create a duplicate job", async function () {
-    try {
-      //Try to create a duplicate job, should fail
-      const newJob = await Job.create({ title: 'j1', salary: 1, equity: 1, company_handle: 'c1' })
-      fail('No error was thrown, test failed.')
-    }
-    catch (err) {
-      expect(err).toBeTruthy()
-    }
-  })
-})
+//   test("fails when try to create a duplicate job", async function () {
+//     try {
+//       //Try to create a duplicate job, should fail
+//       const newJob = await Job.create({ title: 'j1', salary: 1, equity: 1, company_handle: 'c1' })
+//       fail('No error was thrown, test failed.')
+//     }
+//     catch (err) {
+//       expect(err).toBeTruthy()
+//     }
+//   })
+// })
 
-describe("Job.update() tests", function () {
-  test("updates correctly", async function () {
-    const updatedJob = await Job.update("j1", { title: 'updated_j1', salary: 10, equity: 10 })
+// describe("Job.update() tests", function () {
+//   test("updates correctly", async function () {
+//     const updatedJob = await Job.update("j1", { title: 'updated_j1', salary: 10, equity: 10 })
 
-    //Check if job is correctly returned by Job.update()
-    expect(updatedJob).toEqual(
-      {
-        id: 1,
-        title: 'updated_j1',
-        salary: 10,
-        equity: 10,
-        company_handle: 'c1'
-      })
+//     //Check if job is correctly returned by Job.update()
+//     expect(updatedJob).toEqual(
+//       {
+//         id: 1,
+//         title: 'updated_j1',
+//         salary: 10,
+//         equity: 10,
+//         company_handle: 'c1'
+//       })
 
-    //Check if job is correct in database
-    const res = await db.query(
-      "SELECT * FROM jobs WHERE title=updated_j1"
-    )
-    expect(res.rows[0]).toEqual(
-      {
-        id: 1,
-        title: 'updated_j1',
-        salary: 10,
-        equity: 10,
-        company_handle: 'c1'
-      })
-  })
+//     //Check if job is correct in database
+//     const res = await db.query(
+//       "SELECT * FROM jobs WHERE title=updated_j1"
+//     )
+//     expect(res.rows[0]).toEqual(
+//       {
+//         id: 1,
+//         title: 'updated_j1',
+//         salary: 10,
+//         equity: 10,
+//         company_handle: 'c1'
+//       })
+//   })
 
-  test("updates with no data fail", async function () {
-    try {
-      const updatedJob = await Job.update("j1", {})
-      fail('No error was thrown, test failed.')
-    }
-    catch (err) {
-      expect(err).toBeTruthy()
-    }
-  })
+//   test("updates with no data fail", async function () {
+//     try {
+//       const updatedJob = await Job.update("j1", {})
+//       fail('No error was thrown, test failed.')
+//     }
+//     catch (err) {
+//       expect(err).toBeTruthy()
+//     }
+//   })
 
-  test("updates to non-existent entries fail", async function () {
-    try {
-      await Job.update("not_j1", { title: 'updated_j1', salary: 10, equity: 10 })
-      fail('No error was thrown, test failed.')
-    }
-    catch (err) {
-      expect(err).toBeTruthy()
-    }
-  })
-})
+//   test("updates to non-existent entries fail", async function () {
+//     try {
+//       await Job.update("not_j1", { title: 'updated_j1', salary: 10, equity: 10 })
+//       fail('No error was thrown, test failed.')
+//     }
+//     catch (err) {
+//       expect(err).toBeTruthy()
+//     }
+//   })
+// })
 
-describe("Job.remove() tests", function () {
-  test("removes correctly", async function () {
-    await Job.remove("j1");
-    const res = await db.query(
-      "SELECT * FROM jobs WHERE title=$1", ["j1"]);
-    expect(res.rows.length).toEqual(0);
-  });
+// describe("Job.remove() tests", function () {
+//   test("removes correctly", async function () {
+//     await Job.remove("j1");
+//     const res = await db.query(
+//       "SELECT * FROM jobs WHERE title=$1", ["j1"]);
+//     expect(res.rows.length).toEqual(0);
+//   });
 
-  test("fails if trying to remove nonexistent job", async function () {
-    try {
-      await Job.remove("nope");
-      fail('No error was thrown, test failed.')
-    } catch (err) {
-      expect(err).toBeTruthy();
-    }
-  });
-})
+//   test("fails if trying to remove nonexistent job", async function () {
+//     try {
+//       await Job.remove("nope");
+//       fail('No error was thrown, test failed.')
+//     } catch (err) {
+//       expect(err).toBeTruthy();
+//     }
+//   });
+// })

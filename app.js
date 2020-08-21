@@ -6,6 +6,7 @@
 const express = require("express");
 const companiesRoutes = require("./routes/companies");
 const authRoutes = require("./routes/auth");
+const jobsRoutes = require("./routes/jobs");
 const morgan = require("morgan");
 const { NotFoundError } = require("./expressError");
 const { authenticateJWT } = require("./middleware/auth");
@@ -21,6 +22,7 @@ app.use(authenticateJWT);
 // Routers
 app.use("/companies", companiesRoutes);
 app.use("/auth", authRoutes);
+app.use("/jobs", jobsRoutes);
 
 
 
