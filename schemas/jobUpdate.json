@@ -15,11 +15,6 @@
     "equity": {
       "type": "number",
       "minimum": 0
-    },
-    "company_handle": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 10
     }
   },
   "additionalProperties": false,

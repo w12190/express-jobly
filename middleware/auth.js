@@ -63,7 +63,9 @@ function ensureLoggedIn(req, res, next) {
 // an error: this makes this easily unit-tested.
 
 function _ensureAdmin(req, res) {
+  console.log("this is the condition:", (!res.locals.user.is_admin))
   if (!res.locals.user.is_admin) throw new UnauthorizedError();
+  console.log("post err")
 }
 
 // The outer function can be integration tested when used in Express. This is
@@ -74,6 +76,7 @@ function ensureAdmin(req, res, next) {
     _ensureAdmin(req, res);
     return next();
   } catch (err) {
+    console.log("throwing error:", err);
     return next(err);
   }
 }

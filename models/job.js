@@ -33,15 +33,17 @@ class Job {
       }
     }   
     // console.log("this is queryValues", queryValues)
-    console.log(`SELECT id, title FROM jobs`                                   
+
+    //when logging a massive string, save it to a variable
+    const queryStatement = `SELECT id, title FROM jobs`                                   
     + ` ${whereClause.length === 0 ? '' : (`WHERE ${whereClause.join(' AND ')}`)}`    // WHERE clause
-    + ` ORDER BY id`, queryValues)
+    + ` ORDER BY id`;
+
+    console.log(queryStatement, queryValues)
 
     const results = await db.query(
-        `SELECT id, title FROM jobs`                                   
-        + ` ${whereClause.length === 0 ? '' : (`WHERE ${whereClause.join(' AND ')}`)}`    // WHERE clause
-        + ` ORDER BY id`,                                                                 // ORDER BY clause
-         queryValues);
+      queryStatement,                                                                 // ORDER BY clause
+      queryValues);
     return results.rows;
   }
 

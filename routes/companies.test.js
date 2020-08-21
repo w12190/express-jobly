@@ -151,6 +151,12 @@ describe("GET /companies/:handle", function () {
         num_employees: 1,
         logo_url: null,
       },
+      jobs: [{ 
+        id: 1,
+        title: 'j1',
+        salary: 1,
+        equity: '0.1'
+      }]
     });
   });
 

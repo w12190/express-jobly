@@ -64,6 +64,17 @@ class Company {
     return company;
   }
 
+  /** Get all jobs given a company handle*/
+  static async getAllCompanyJobs(handle) {
+    const companies = await db.query(
+      `SELECT id, title, salary, equity
+      FROM jobs
+      WHERE company_handle = $1`,
+      [handle]
+    );
+    return companies.rows;
+  }
+
   /** Create a company (from data), update db, return new company data.
    *
    * data should be { handle, name, num_employees, description, logo_url }

@@ -44,7 +44,7 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-/** GET /[handle]  =>  { company }
+/** GET /[handle]  =>  { companies: [{ handle, name }, jobs: [ { id, title, salary, equity}, ... ] }
  *
  *  Company is { handle, name, num_employees, description, logo_url, jobs }
  *   where jobs is [{ id, title, salary, equity }, ...]
@@ -57,7 +57,9 @@ router.get("/:handle", async function (req, res, next) {
 
   try {
     const company = await Company.get(req.params.handle);
-    return res.json({ company });
+    const jobs = await Company.getAllCompanyJobs(req.params.handle);
+    // console.log({ company, jobs });
+    return res.json({ company, jobs });
   } catch (err) {
     return next(err);
   }

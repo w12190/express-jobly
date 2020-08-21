@@ -221,7 +221,7 @@ describe("Job.update() tests", function () {
 
   test("updates to non-existent entries fail", async function () {
     try {
-      await Job.update("not_j1", { title: 'updated_j1', salary: 10, equity: 0.1 })
+      await Job.update(0, { title: 'updated_j1', salary: 10, equity: 0.1 })
       fail('No error was thrown, test failed.')
     }
     catch (err) {
